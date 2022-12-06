@@ -5,8 +5,11 @@ const createCategory = {
   body: Joi.object().keys({
     name: Joi.string().required(),
     description: Joi.string().required(),
-    price: Joi.number().required(),
-    totalStock: Joi.number().required(),
+    parentCategory: Joi.string().custom(objectId),
+    subCategories: Joi.array().items(Joi.string().custom(objectId)),
+  }),
+  files: Joi.object().keys({
+    images: Joi.array().required(),
   }),
 };
 
@@ -30,14 +33,15 @@ const updateCategory = {
   params: Joi.object().keys({
     categoryId: Joi.required().custom(objectId),
   }),
-  body: Joi.object()
-    .keys({
-      name: Joi.string().required(),
-      description: Joi.string().required(),
-      price: Joi.number().required(),
-      totalStock: Joi.number().required(),
-    })
-    .min(1),
+  body: Joi.object().keys({
+    name: Joi.string(),
+    description: Joi.string(),
+    parentCategory: Joi.string().custom(objectId).optional(),
+    subCategories: Joi.array().items(Joi.string().custom(objectId)).optional(),
+  }),
+  files: Joi.object().keys({
+    images: Joi.array(),
+  }),
 };
 
 const deleteCategory = {

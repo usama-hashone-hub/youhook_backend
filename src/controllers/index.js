@@ -2,14 +2,18 @@ module.exports.authController = require('./auth.controller');
 
 // User Controllers
 module.exports.homeController = require('./User/home.controller');
-// module.exports.cartController = require('./User/cart.controller');
-module.exports.orderController = require('./User/order.controller');
+module.exports.generalController = require('./User/general.controller');
+module.exports.orderController = require('./User/_order.controller');
+module.exports.productController = require('./User/product.controller');
+module.exports.adController = require('./User/ad.controller');
+module.exports.rentController = require('./User/rent.controller');
+module.exports.ratingController = require('./User/rating.controller');
 
 // Admin Controllers
 module.exports.userController = require('./Admin/user.controller');
 module.exports.dashboardController = require('./Admin/dashboard.controller');
-module.exports.productController = require('./Admin/product.controller');
 // module.exports.campaignController = require('./Admin/campaign.controller');
 module.exports.paymentController = require('./Admin/payment.controller');
 module.exports.feedbackController = require('./Admin/feedback.controller');
 module.exports.categoryController = require('./Admin/category.controller');
+module.exports.ratingQuestionController = require('./Admin/question.controller');

@@ -6,11 +6,14 @@ const Payment = require('../models/payment.model');
 const doPayment = async (totalAmount) => {
   return {};
 };
-const createPayment = async (order, payment) => {
+const createPayment = async (rent) => {
   return Payment.create({
-    user: order.user,
-    order: order._id,
-    totalAmount: order.totalAmount,
+    user: rent.rentInBy,
+    rent: rent._id,
+    totalAmount: rent.totalAmount * 1,
+    tax: rent.tax * 1,
+    deposit: rent.deposit * 1,
+    delivery: rent.delivery * 1,
   });
 };
 
@@ -19,7 +22,7 @@ const queryPayments = async (filter, options) => {
 };
 
 const getPaymentById = async (id) => {
-  return await Payment.findById(id).populate('Order');
+  return await Payment.findById(id).populate('rent');
 };
 
 module.exports = { doPayment, createPayment, queryPayments, getPaymentById };

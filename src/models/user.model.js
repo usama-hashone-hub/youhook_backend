@@ -76,12 +76,12 @@ const userSchema = mongoose.Schema(
     },
     passwordResetCode: String,
     passwordResetExpireAt: Date,
-    favProduct: [
-      {
-        type: mongoose.Schema.ObjectId,
-        ref: 'Product',
-      },
-    ],
+    favProducts: {
+      type: [mongoose.Schema.ObjectId],
+      ref: 'Product',
+      default: [],
+    },
+
     orders: {
       type: mongoose.Schema.ObjectId,
       ref: 'Order',
@@ -99,9 +99,21 @@ const userSchema = mongoose.Schema(
     deviceTokens: {
       type: [String],
     },
+    ratings: {
+      type: Number,
+      default: 0,
+      // get: getRatings,
+    },
+    BlockedUsers: {
+      type: [mongoose.Schema.ObjectId],
+      ref: 'User',
+      // get: getRatings,
+    },
   },
   {
     timestamps: true,
+    // toObject: { getters: true, setters: true },
+    // toJSON: { getters: true, setters: true },
   }
 );
 
@@ -109,6 +121,10 @@ const userSchema = mongoose.Schema(
 userSchema.plugin(toJSON);
 userSchema.plugin(paginate);
 
+// Mongoose passes the raw value in MongoDB `email` to the getter
+// async function getRatings() {
+//   return 3;
+// }
 /**
  * Check if email is taken
  * @param {string} email - The user's email

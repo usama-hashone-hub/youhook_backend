@@ -1,5 +1,14 @@
 const allRoles = {
-  user: ['verifyPhone', 'verifyEmail', 'getMyProfile', 'updateProfile', 'manageCart', 'createOrder'],
+  user: [
+    'verifyPhone',
+    'verifyEmail',
+    'getMyProfile',
+    'updateProfile',
+    'manageProducts',
+    'manageAds',
+    'managefavs',
+    'getInRent',
+  ],
   admin: [
     'getMyProfile',
     'updateProfile',
@@ -8,14 +17,13 @@ const allRoles = {
     'manageUsers',
     'getProducts',
     'manageProducts',
-    'getCampaigns',
-    'manageCampaigns',
-    'manageCampaignPrizes',
-    'manageCampaignNotes',
-    'manageWinners',
     'getOrder',
     'getPayment',
     'getFeedback',
+    'manageCategories',
+    'getCategories',
+    'getRatingQuestions',
+    'manageRatingQuestions',
   ],
 };
 

@@ -14,10 +14,10 @@ const ratingSchema = mongoose.Schema(
       ref: 'user',
       required: [true, 'user is required'],
     },
-    product: {
+    rent: {
       type: mongoose.Schema.ObjectId,
       ref: 'user',
-      required: [true, 'product is required'],
+      required: [true, 'Rent is required'],
     },
     by: {
       type: mongoose.Schema.ObjectId,

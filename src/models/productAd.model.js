@@ -4,6 +4,11 @@ const { toJSON, paginate } = require('./plugins');
 
 const productAdSchema = mongoose.Schema(
   {
+    user: {
+      type: mongoose.Schema.ObjectId,
+      ref: 'User',
+      required: [true, 'user are required'],
+    },
     title: {
       type: String,
       required: true,

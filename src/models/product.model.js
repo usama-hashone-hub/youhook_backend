@@ -16,8 +16,8 @@ const productSchema = mongoose.Schema(
       required: true,
     },
     condition: {
-      type: Boolean,
-      default: false,
+      type: String,
+      enum: ['new', 'good', 'used'],
       required: true,
     },
     ratesPerDay: {
@@ -52,6 +52,11 @@ const productSchema = mongoose.Schema(
       default: false,
       required: true,
     },
+    status: {
+      type: String,
+      enum: ['archive', 'rentOnt', 'live'],
+      default: 'archive',
+    },
     isActive: {
       type: Boolean,
       default: true,
@@ -60,10 +65,23 @@ const productSchema = mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    deposit: {
+      type: Number,
+      default: 0,
+    },
+    lastRentOut: {
+      type: mongoose.Schema.ObjectId,
+      ref: 'Rent',
+    },
     categories: {
       type: [mongoose.Schema.ObjectId],
       ref: 'Categroy',
       required: [true, 'categories are required'],
+    },
+    user: {
+      type: mongoose.Schema.ObjectId,
+      ref: 'User',
+      required: [true, 'user are required'],
     },
     loc: {
       type: {

@@ -8,11 +8,15 @@ const categroySchema = mongoose.Schema(
       type: String,
       required: true,
     },
-    image: {
+    images: {
+      type: [String],
+      required: true,
+    },
+    description: {
       type: String,
       required: true,
     },
-    subCategory: {
+    subCategories: {
       type: [mongoose.Schema.ObjectId],
       ref: 'Category',
     },

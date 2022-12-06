@@ -32,7 +32,8 @@ const envVarsSchema = Joi.object()
     TWILIO_ACCOUNT_SID: Joi.string().description('Twilio account sid'),
     TWILIO_AUTH_TOKEN: Joi.string().description('Twilio auth token'),
     TWILIO_SERVICE_SID: Joi.string().description('Twilio service sid'),
-    TAX: Joi.number().description('tax on complete order in percentage'),
+    TAX: Joi.number().description('tax on complete rent in percentage'),
+    DELIVERY: Joi.number().description('tax on complete rent in percentage'),
   })
   .unknown();
 
@@ -87,5 +88,6 @@ module.exports = {
     authToken: envVars.TWILIO_AUTH_TOKEN,
     serviceSid: envVars.TWILIO_SERVICE_SID,
   },
-  tax: envVars.tax,
+  tax: envVars.TAX,
+  delivery: envVars.DELIVERY,
 };

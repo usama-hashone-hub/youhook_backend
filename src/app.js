@@ -22,6 +22,8 @@ const { Room, Message } = require('./models');
 
 const admin = require('firebase-admin');
 const serviceAccount = require('../nodetemplate-53166-firebase-adminsdk-wbsbn-116f7fbd29.json');
+const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
 
 const app = express();
 const http = require('http').Server(app);
@@ -30,6 +32,9 @@ const io = require('socket.io')(http, {
     origin: '*',
   },
 });
+
+app.use(bodyParser.json({ limit: '10mb', extended: true }));
+app.use(bodyParser.urlencoded({ limit: '10mb', extended: true }));
 
 if (config.env !== 'test') {
   app.use(morgan.successHandler);
@@ -41,11 +46,10 @@ app.enable('trust proxy');
 // set security HTTP headers
 app.use(helmet());
 
-// parse json request body
-app.use(express.json());
-
-// parse urlencoded request body
-app.use(express.urlencoded({ extended: true }));
+// Body parser, reading data from body into req.body
+app.use(express.json({ limit: '10kb' }));
+app.use(express.urlencoded({ extended: true, limit: '10kb' }));
+app.use(cookieParser());
 
 // sanitize request data
 app.use(xss());
@@ -67,14 +71,8 @@ if (config.env === 'production') {
   app.use('/v1/auth', authLimiter);
 }
 
-app.post('/upload', uploadImage, async (req, res) => {
-  // console.log(req.files.photo);
-  if (req.files?.photo) req.body.photo = await getPath(req.files?.photo);
-  res.send({ req: req.body });
-});
-
 app.get('/', (req, res, next) => {
-  res.send({ message: 'Welcome to boilerplate APIs' });
+  res.send({ message: 'Welcome to youhook APIs' });
 });
 
 // v1 api routes

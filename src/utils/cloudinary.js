@@ -34,6 +34,10 @@ exports.uploadImage = multer({
     name: 'photo',
     maxCount: 1,
   },
+  {
+    name: 'images',
+    maxCount: 10,
+  },
 ]);
 
 const uploads = (file, folder) => {
@@ -54,8 +58,12 @@ exports.getPath = async (files) => {
   return new Promise((resolve, reject) => {
     let a = files.map(async (file) => {
       await uploads(file.path, 'Images').then((res) => {
-        file['url'] = res;
-        fs.unlinkSync(file.path);
+        try {
+          file['url'] = res;
+          fs.unlinkSync(file.path);
+        } catch (err) {
+          console.log(err);
+        }
       });
     });
     Promise.all(a).then(function () {

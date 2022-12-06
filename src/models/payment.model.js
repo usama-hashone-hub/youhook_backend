@@ -9,14 +9,25 @@ const paymentSchema = mongoose.Schema(
       ref: 'User',
       required: [true, 'User is required'],
     },
-    order: {
+    rent: {
       type: mongoose.Schema.ObjectId,
-      ref: 'Order',
-      required: [true, 'Order is required'],
+      ref: 'Rent',
+      required: [true, 'Rent is required'],
     },
     totalAmount: {
       type: Number,
       required: true,
+    },
+    tax: {
+      type: Number,
+      required: true,
+    },
+    deposit: {
+      type: Number,
+      required: true,
+    },
+    delivery: {
+      type: Number,
     },
   },
   {

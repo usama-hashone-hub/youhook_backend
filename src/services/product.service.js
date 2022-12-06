@@ -12,7 +12,7 @@ const queryProducts = async (filter, options) => {
 };
 
 const getProductById = async (id) => {
-  return await Product.findById(id);
+  return Product.findById(id);
 };
 
 const updateProductById = async (productId, updateBody) => {

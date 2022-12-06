@@ -8,6 +8,7 @@ const {
   orderValidation,
   generalValidation,
   categoryValidation,
+  ratingQuestionValidation,
 } = require('../../validations');
 const {
   dashboardController,
@@ -17,7 +18,9 @@ const {
   orderController,
   feedbackController,
   categoryController,
+  ratingQuestionController,
 } = require('../../controllers');
+const { uploadImage } = require('../../utils/cloudinary');
 
 const router = express.Router();
 
@@ -38,24 +41,61 @@ router
 // Product Mangement routes
 router
   .route('/products')
-  .post(can('manageProducts'), validate(productValidation.createProduct), productController.createProduct)
+  // .post(can('manageProducts'), validate(productValidation.createProduct), productController.createProduct)
   .get(can('getProducts'), validate(productValidation.getProducts), productController.getProducts);
 
+// router
+//   .route('/product/:productId')
+//   .get(can('getProducts'), validate(productValidation.getProduct), productController.getProduct)
+//   .patch(can('manageProducts'), validate(productValidation.updateProduct), productController.updateProduct)
+//   .delete(can('manageProducts'), validate(productValidation.deleteProduct), productController.deleteProduct);
+
 router
-  .route('/product/:productId')
-  .get(can('getProducts'), validate(productValidation.getProduct), productController.getProduct)
-  .patch(can('manageProducts'), validate(productValidation.updateProduct), productController.updateProduct)
-  .delete(can('manageProducts'), validate(productValidation.deleteProduct), productController.deleteProduct);
+  .route('/ratingQuestions')
+  .post(
+    can('manageRatingQuestions'),
+    validate(ratingQuestionValidation.createRatingQuestion),
+    ratingQuestionController.createRatingQuestion
+  )
+  .get(can('getRatingQuestions'), ratingQuestionController.getRatingQuestions);
+
+router
+  .route('/ratingQuestion/:ratingQuestionId')
+  .get(
+    can('getRatingQuestions'),
+    validate(ratingQuestionValidation.getRatingQuestion),
+    ratingQuestionController.getRatingQuestion
+  )
+  .patch(
+    can('manageRatingQuestions'),
+    validate(ratingQuestionValidation.updateRatingQuestion),
+    ratingQuestionController.updateRatingQuestion
+  )
+  .delete(
+    can('manageRatingQuestions'),
+    validate(ratingQuestionValidation.deleteRatingQuestion),
+    ratingQuestionController.deleteRatingQuestion
+  );
+
+router
+  .route('/categories')
+  .post(can('manageCategories'), uploadImage, validate(categoryValidation.createCategory), categoryController.createCategory)
+  .get(can('getCategories'), validate(categoryValidation.getCategories), categoryController.getCategories);
 
 router
   .route('/category/:categoryId')
   .get(can('getCategories'), validate(categoryValidation.getCategory), categoryController.getCategory)
-  .patch(can('manageCategories'), validate(categoryValidation.updateCategory), categoryController.updateCategory)
+  .patch(
+    can('manageCategories'),
+    uploadImage,
+    validate(categoryValidation.updateCategory),
+    categoryController.updateCategory
+  )
   .delete(can('manageCategories'), validate(categoryValidation.deleteCategory), categoryController.deleteCategory);
 
 //Order routes
-router.route('/orders').get(can('getOrder'), validate(orderValidation.getOrders), orderController.getOrders);
-router.route('/order/:orderId').get(can('getOrder'), validate(orderValidation.getOrder), orderController.getOrder);
+// router.route('/orders').get(can('getOrder'), validate(orderValidation.getOrders), orderController.getOrders);
+// router.route('/order/:orderId').get(can('getOrder'), validate(orderValidation.getOrder), orderController.getOrder);
 
 //Payment routes
 router.route('/payments').get(can('getPayment'), validate(paymentValidation.getPayments), paymentController.getPayments);
