@@ -6,8 +6,34 @@ const { rentService, productService, paymentService } = require('../../services'
 const { getPath } = require('../../utils/cloudinary');
 const config = require('../../config/config');
 const moment = require('moment');
+const { Rent } = require('../../models');
 
-const createRent = catchAsync(async (req, res) => {
+var enumerateDaysBetweenDates = function (startDate, endDate) {
+  var dates = [];
+
+  var currDate = moment(startDate).subtract(1, 'days').startOf('day');
+  var lastDate = moment(endDate).startOf('day');
+
+  while (currDate.add(1, 'days').diff(lastDate) <= 0) {
+    dates.push(currDate.clone().format('Y-M-D'));
+  }
+
+  return dates;
+};
+
+const getRentalDetails = catchAsync(async (req, res) => {
+  const productRentalHistory = await Rent.find({ product: req.query.product });
+
+  let notAvalibleDates = [];
+
+  productRentalHistory.map((i) => {
+    notAvalibleDates.push(...enumerateDaysBetweenDates(i.startDate, i.endDate));
+  });
+
+  res.send({ bookedDates: [...new Set(notAvalibleDates)] });
+});
+
+const getRentRates = catchAsync(async (req, res) => {
   const product = await productService.getProductById(req.body.product);
 
   const days = moment(req.body.endDate).diff(req.body.startDate, 'days');
@@ -17,17 +43,27 @@ const createRent = catchAsync(async (req, res) => {
   let totalAmount = product.ratesPerDay * days;
   let tax = (config.tax / 100) * totalAmount;
   let deposit = (product.deposit / 100) * totalAmount;
-  let delivery = (config.delivery / 100) * totalAmount;
+  let delivery = 0;
+
+  if (req.body.delivery_method == 'delivery') {
+    delivery = (config.delivery / 100) * totalAmount;
+  }
 
   totalAmount = totalAmount + tax + deposit + delivery;
 
-  const rent = await rentService.createRent(req.body);
+  res.status(httpStatus.OK).send({ totalAmount, tax, deposit, delivery });
+});
 
-  let obj = { totalAmount, tax, deposit, delivery, ...rent._doc };
+const createRent = catchAsync(async (req, res) => {
+  let obj = req.body;
 
-  const payment = await paymentService.createPayment(obj);
+  const rent = await rentService.createRent(obj);
 
-  const updatedProduct = await productService.updateProductById(rent.product, { status: 'rentOut', lastRentOut: rent._id });
+  obj = { ...obj, ...rent._doc };
+
+  await paymentService.createPayment(obj);
+
+  await productService.updateProductById(rent.product, { status: 'rentOut', lastRentOut: rent._id });
 
   res.status(httpStatus.CREATED).send(rent);
 });
@@ -71,21 +107,14 @@ const getRent = catchAsync(async (req, res) => {
 });
 
 const updateRent = catchAsync(async (req, res) => {
-  let product = await rentService.getRentById(req.params.productId);
-  let images = product.images;
-
-  if (req.body?.deleteImages) {
-    images = images.filter((image) => !req.body.deleteImages.includes(image));
+  if (req?.body?.status == 'active') {
   }
-
-  if (req.files?.images) {
-    let i = await getPath(req.files?.images);
-    i.map((image) => images.push(image));
+  if (req?.body?.status == 'completed') {
+    //deposite will be retured here
   }
+  let rent = await rentService.updateRentById(req.params.rentId, req.body);
 
-  req.body.images = images;
-  product = await rentService.updateRentById(req.params.productId, req.body);
-  res.send(product);
+  res.send(rent);
 });
 
 const deleteRent = catchAsync(async (req, res) => {
@@ -95,4 +124,14 @@ const deleteRent = catchAsync(async (req, res) => {
   });
 });
 
-module.exports = { createRent, getRents, getRent, updateRent, deleteRent, getRentInItems, getRentOutItems };
+module.exports = {
+  createRent,
+  getRents,
+  getRent,
+  updateRent,
+  deleteRent,
+  getRentInItems,
+  getRentOutItems,
+  getRentalDetails,
+  getRentRates,
+};

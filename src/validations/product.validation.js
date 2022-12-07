@@ -71,6 +71,12 @@ const deleteProduct = {
     productId: Joi.string().custom(objectId),
   }),
 };
+const getNearMeProducts = {
+  query: Joi.object().keys({
+    latlng: Joi.string().required(),
+    maxDistance: Joi.number().required('distance is required in meters'),
+  }),
+};
 
 module.exports = {
   createProduct,
@@ -78,4 +84,5 @@ module.exports = {
   getProduct,
   updateProduct,
   deleteProduct,
+  getNearMeProducts,
 };

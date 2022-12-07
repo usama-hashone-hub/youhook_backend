@@ -3,9 +3,30 @@ const pick = require('../../utils/pick');
 const ApiError = require('../../utils/ApiError');
 const catchAsync = require('../../utils/catchAsync');
 const { userService, ratingService } = require('../../services');
+const { Rating } = require('../../models');
+const mongoose = require('mongoose');
 
 const doRatings = catchAsync(async (req, res) => {
+  const { user } = req.body;
   const rating = await ratingService.createRating(req.body);
+
+  let avgRating = await Rating.aggregate([
+    {
+      $match: {
+        user: mongoose.Types.ObjectId(user),
+      },
+    },
+    {
+      $group: {
+        _id: '$user',
+        avg: {
+          $avg: '$rating',
+        },
+      },
+    },
+  ]);
+  await userService.updateUserById(user, { ratings: avgRating[0].avg });
+
   res.status(httpStatus.CREATED).send(rating);
 });
 

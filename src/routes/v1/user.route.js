@@ -10,6 +10,7 @@ const {
   generalController,
   rentController,
   ratingController,
+  categoryController,
 } = require('../../controllers');
 const {
   productValidation,
@@ -23,6 +24,9 @@ const { uploadImage } = require('../../utils/cloudinary');
 const router = express.Router();
 
 router.route('/').get(homeController.getData);
+router.route('/categories').get(categoryController.getCategories);
+router.route('/nearMeProducts').get(validate(productValidation.getNearMeProducts), productController.getNearMeProducts);
+router.route('/nearMeAds').get(validate(productValidation.getNearMeProducts), adController.nearMeAds);
 
 router
   .route('/products')
@@ -41,6 +45,11 @@ router
   .post(can('managefavs'), validate(generalValidation.addFav), generalController.addFav);
 
 router.route('/rent').post(can('getInRent'), validate(rentValidation.createRent), rentController.createRent);
+router.route('/rent/:rentId').patch(can('updateRentStatus'), validate(rentValidation.updateRent), rentController.updateRent);
+router
+  .route('/rentDetail')
+  .get(can('getRentalDetails'), validate(rentValidation.getRentalDetails), rentController.getRentalDetails);
+router.route('/rentRates').get(can('getRentalRates'), validate(rentValidation.getRentalRates), rentController.getRentRates);
 
 router
   .route('/ads')
@@ -56,16 +65,17 @@ router
 router.route('/getRentInItems').get(can('getProducts'), rentController.getRentInItems);
 router.route('/getRentOutItems').get(can('getProducts'), rentController.getRentOutItems);
 
-router.route('/report').get(can('reportIssue'), validate(generalValidation.report), generalController.report);
+router.route('/report').post(can('reportIssue'), validate(generalValidation.report), generalController.report);
 
-router.route('/blockUser').get(can('blockUser'), validate(generalValidation.blockUser), generalController.blockUser);
+router.route('/blockUser').post(can('blockUser'), validate(generalValidation.blockUser), generalController.blockUser);
+router.route('/unblockUser').post(can('unblockUser'), validate(generalValidation.blockUser), generalController.unblockUser);
+router.route('/blockUsers').get(can('getblockUsers'), generalController.blockUsers);
+
 router.route('/postSearch').get(can('search'), validate(generalValidation.postSearch), generalController.postSearch);
 
 router
   .route('/ratings')
   .get(can('manageRatings'), ratingController.getRatings)
   .post(can('manageRatings'), validate(ratingValidation.doRatings), ratingController.doRatings);
-
-router.route('order').post(can('createOrder'), validate(userValidation.createOrder), orderController.createOrder);
 
 module.exports = router;

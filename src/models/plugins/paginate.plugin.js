@@ -40,16 +40,24 @@ const paginate = (schema) => {
     let docsPromise = this.find(filter).sort(sort).skip(skip).limit(limit);
 
     if (options.populate) {
-      options.populate.split(',').forEach((populateOption) => {
-        docsPromise = docsPromise.populate(
-          populateOption
-            .split('.')
-            .reverse()
-            .reduce((a, b) => ({ path: b, populate: a }))
-        );
-      });
-    }
+      // options.populate.split(',').forEach((populateOption) => {
+      //   docsPromise = docsPromise.populate(
+      //     populateOption
+      //       .split(':')
+      //       .reverse()
+      //       .reduce((a, b) => ({
+      //         path: b,
+      //         populate: a.split('|')[0],
+      //         select: a
+      //           .split('|')
+      //           .slice(1)
+      //           .reduce((s, v) => ({ ...s, [v]: 1 }), {}),
+      //       }))
+      //   );
+      // });
 
+      docsPromise.populate(options.populate);
+    }
     docsPromise = docsPromise.select(select).exec();
 
     return Promise.all([countPromise, docsPromise]).then((values) => {

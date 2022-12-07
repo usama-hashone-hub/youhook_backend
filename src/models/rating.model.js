@@ -19,6 +19,11 @@ const ratingSchema = mongoose.Schema(
       ref: 'user',
       required: [true, 'Rent is required'],
     },
+    rented: {
+      type: String,
+      enum: ['in', 'out'],
+      required: true,
+    },
     by: {
       type: mongoose.Schema.ObjectId,
       ref: 'user',

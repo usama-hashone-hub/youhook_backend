@@ -8,6 +8,11 @@ const allRoles = {
     'manageAds',
     'managefavs',
     'getInRent',
+    'getRentalDetails',
+    'getRentalRates',
+    'updateRentStatus',
+    'manageRatings',
+    'reportIssue',
   ],
   admin: [
     'getMyProfile',

@@ -8,6 +8,11 @@ const createRent = {
     product: Joi.required().custom(objectId),
     startDate: Joi.date().required(),
     endDate: Joi.date().required(),
+    totalAmount: Joi.number().required(),
+    tax: Joi.number().required(),
+    deposit: Joi.number().required(),
+    delivery: Joi.number().required(),
+    delivery_method: Joi.string().required(),
   }),
 };
 
@@ -34,9 +39,10 @@ const updateRent = {
   body: Joi.object()
     .keys({
       rentInBy: Joi.custom(objectId),
-      rentOutBy: Joi.required().custom(objectId),
+      rentOutBy: Joi.custom(objectId),
       product: Joi.custom(objectId),
       startDate: Joi.date(),
+      status: Joi.string(),
       endDate: Joi.date(),
     })
     .min(1),
@@ -48,10 +54,27 @@ const deleteRent = {
   }),
 };
 
+const getRentalDetails = {
+  query: Joi.object().keys({
+    product: Joi.required().custom(objectId),
+  }),
+};
+
+const getRentalRates = {
+  body: Joi.object().keys({
+    product: Joi.required().custom(objectId),
+    startDate: Joi.date().required(),
+    endDate: Joi.date().required(),
+    delivery_method: Joi.string().required(),
+  }),
+};
+
 module.exports = {
   createRent,
   getRents,
   getRent,
   updateRent,
   deleteRent,
+  getRentalRates,
+  getRentalDetails,
 };

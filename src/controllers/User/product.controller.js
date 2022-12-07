@@ -4,6 +4,7 @@ const ApiError = require('../../utils/ApiError');
 const catchAsync = require('../../utils/catchAsync');
 const { productService } = require('../../services');
 const { getPath } = require('../../utils/cloudinary');
+const { Product } = require('../../models');
 
 const createProduct = catchAsync(async (req, res) => {
   if (req.files?.images) req.body.images = await getPath(req.files?.images);
@@ -33,6 +34,41 @@ const getProduct = catchAsync(async (req, res) => {
   res.send(product);
 });
 
+const getNearMeProducts = catchAsync(async (req, res) => {
+  let { latlng, maxDistance } = req.query;
+  let [lat, lng] = latlng.split(',');
+  console.log({ lat, lng });
+
+  const products = await Product.aggregate([
+    {
+      $geoNear: {
+        near: { type: 'Point', coordinates: [lat * 1, lng * 1] },
+        distanceField: 'distance',
+        key: 'loc',
+        query: { status: 'live', isActive: true },
+        maxDistance: maxDistance * 1,
+        minDistance: 0,
+      },
+    },
+    {
+      $lookup: {
+        from: 'users',
+        localField: 'user',
+        foreignField: '_id',
+        as: 'user',
+        pipeline: [{ $project: { ratings: 1 } }],
+      },
+    },
+    {
+      $unwind: {
+        path: '$user',
+      },
+    },
+  ]);
+
+  res.send({ products });
+});
+
 const updateProduct = catchAsync(async (req, res) => {
   let product = await productService.getProductById(req.params.productId);
   let images = product.images;
@@ -58,4 +94,4 @@ const deleteProduct = catchAsync(async (req, res) => {
   });
 });
 
-module.exports = { createProduct, getProducts, getProduct, updateProduct, deleteProduct };
+module.exports = { createProduct, getProducts, getProduct, updateProduct, deleteProduct, getNearMeProducts };

@@ -12,9 +12,18 @@ const createCategory = catchAsync(async (req, res) => {
 });
 
 const getCategories = catchAsync(async (req, res) => {
-  if (req.files?.images) req.body.images = await getPath(req.files?.images);
   const filter = pick(req.query, ['name']);
-  const options = pick(req.query, ['sortBy', 'limit', 'page']);
+  let options = pick(req.query, ['sortBy', 'limit', 'page']);
+  options['populate'] = [
+    {
+      path: 'parentCategory',
+      model: 'Category',
+    },
+    {
+      path: 'subCategories',
+      model: 'Category',
+    },
+  ];
   const result = await categoryService.queryCategories(filter, options);
   res.send(result);
 });

@@ -19,6 +19,7 @@ const rentSchema = mongoose.Schema(
       ref: 'Product',
       required: [true, 'Product is required'],
     },
+
     // payment: {
     //   type: mongoose.Schema.ObjectId,
     //   ref: 'Payment',
@@ -28,6 +29,11 @@ const rentSchema = mongoose.Schema(
       type: String,
       enum: ['pending', 'active', 'completed'],
       default: 'pending',
+    },
+    delivery_method: {
+      type: String,
+      enum: ['pickup', 'delivery'],
+      default: 'pickup',
     },
     startDate: {
       type: Date,

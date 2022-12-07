@@ -3,6 +3,7 @@ const pick = require('../../utils/pick');
 const ApiError = require('../../utils/ApiError');
 const catchAsync = require('../../utils/catchAsync');
 const { userService, generalService, productService } = require('../../services');
+const { User } = require('../../models');
 
 const addFav = catchAsync(async (req, res) => {
   const fav = await generalService.addFav(req.user, req.query.productId);
@@ -22,13 +23,24 @@ const queryFavs = catchAsync(async (req, res) => {
 });
 
 const report = catchAsync(async (req, res) => {
-  return await generalService.createReport(req.body);
+  const a = await generalService.createReport(req.body);
   //email will be send to user and admin
+  res.send({ report: a });
 });
 
 const blockUser = catchAsync(async (req, res) => {
   const user = await generalService.blockUser(req.user, req.query.userId);
-  res.status(httpStatus.OK).send({ blockUser: user.blockUser });
+  res.status(httpStatus.OK).send({ status: true });
+});
+
+const unblockUser = catchAsync(async (req, res) => {
+  const user = await generalService.unblockUser(req.user, req.query.userId);
+  res.status(httpStatus.OK).send({ status: true });
+});
+
+const blockUsers = catchAsync(async (req, res) => {
+  const users = await User.findById(req._id).populate('BlockedUsers');
+  res.status(httpStatus.OK).send({ users: users });
 });
 
 const postSearch = catchAsync(async (req, res) => {
@@ -39,4 +51,4 @@ const postSearch = catchAsync(async (req, res) => {
   res.send(products);
 });
 
-module.exports = { queryFavs, delFav, addFav, report, blockUser, postSearch };
+module.exports = { queryFavs, delFav, addFav, report, blockUser, postSearch, unblockUser, blockUsers };

@@ -4,6 +4,7 @@ const ApiError = require('../../utils/ApiError');
 const catchAsync = require('../../utils/catchAsync');
 const { productAdService } = require('../../services');
 const { getPath } = require('../../utils/cloudinary');
+const { ProductAd } = require('../../models');
 
 const createAd = catchAsync(async (req, res) => {
   if (req.files?.images) req.body.images = await getPath(req.files?.images);
@@ -58,4 +59,38 @@ const deleteAd = catchAsync(async (req, res) => {
   });
 });
 
-module.exports = { createAd, getAds, getAd, updateAd, deleteAd };
+const nearMeAds = catchAsync(async (req, res) => {
+  let { latlng, maxDistance } = req.query;
+  let [lat, lng] = latlng.split(',');
+
+  const ads = await ProductAd.aggregate([
+    {
+      $geoNear: {
+        near: { type: 'Point', coordinates: [lat * 1, lng * 1] },
+        distanceField: 'distance',
+        key: 'loc',
+        query: { isActive: true },
+        maxDistance: maxDistance * 1,
+        minDistance: 0,
+      },
+    },
+    {
+      $lookup: {
+        from: 'users',
+        localField: 'user',
+        foreignField: '_id',
+        as: 'user',
+        pipeline: [{ $project: { ratings: 1 } }],
+      },
+    },
+    {
+      $unwind: {
+        path: '$user',
+      },
+    },
+  ]);
+
+  res.send({ ads });
+});
+
+module.exports = { createAd, getAds, getAd, updateAd, deleteAd, nearMeAds };

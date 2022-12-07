@@ -49,8 +49,8 @@ const report = {
     reportedBy: Joi.string().custom(objectId).required(),
     product: Joi.string().custom(objectId).required(),
     rent: Joi.string().custom(objectId).required(),
-    description: Joi.string().custom(objectId).required(),
-    issues: Joi.string().custom(objectId).required(),
+    description: Joi.string().required(),
+    issues: Joi.array().required(),
   }),
 };
 module.exports = {

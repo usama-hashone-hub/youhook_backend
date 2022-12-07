@@ -5,6 +5,8 @@ const register = {
   body: Joi.object().keys({
     email: Joi.string().required().email(),
     password: Joi.string().required().custom(password),
+    firstName: Joi.string().required(),
+    lastName: Joi.string().required(),
     username: Joi.string().required(),
     role: Joi.string().required(),
   }),
@@ -86,7 +88,9 @@ const verifyPhone = {
 
 const updateProfileAttributes = {
   body: Joi.object().keys({
-    name: Joi.string(),
+    firstName: Joi.string(),
+    lastName: Joi.string(),
+    username: Joi.string(),
   }),
 };
 

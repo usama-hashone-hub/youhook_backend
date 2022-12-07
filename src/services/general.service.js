@@ -25,7 +25,11 @@ const createReport = async (report) => {
 };
 
 const blockUser = async (user, userId) => {
-  return userService.updateUserById(user.id, { $push: { blockUser: userId } }, { new: true });
+  return userService.updateUserById(user.id, { $push: { BlockedUsers: userId } }, { new: true });
 };
 
-module.exports = { addFav, delFav, queryFavs, createReport, blockUser };
+const unblockUser = async (user, userId) => {
+  return userService.updateUserById(user.id, { $pull: { BlockedUsers: userId } }, { new: true });
+};
+
+module.exports = { addFav, delFav, queryFavs, createReport, blockUser, unblockUser };
