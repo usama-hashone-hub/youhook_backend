@@ -71,10 +71,13 @@ const deleteProduct = {
     productId: Joi.string().custom(objectId),
   }),
 };
+
 const getNearMeProducts = {
   query: Joi.object().keys({
     latlng: Joi.string().required(),
     maxDistance: Joi.number().required('distance is required in meters'),
+    limit: Joi.number().integer(),
+    page: Joi.number().integer(),
   }),
 };
 

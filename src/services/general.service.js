@@ -25,7 +25,7 @@ const createReport = async (report) => {
 };
 
 const blockUser = async (user, userId) => {
-  return userService.updateUserById(user.id, { $push: { BlockedUsers: userId } }, { new: true });
+  return userService.updateUserById(user.id, { $addToSet: { BlockedUsers: userId } }, { new: true });
 };
 
 const unblockUser = async (user, userId) => {

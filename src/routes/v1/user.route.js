@@ -71,11 +71,13 @@ router.route('/blockUser').post(can('blockUser'), validate(generalValidation.blo
 router.route('/unblockUser').post(can('unblockUser'), validate(generalValidation.blockUser), generalController.unblockUser);
 router.route('/blockUsers').get(can('getblockUsers'), generalController.blockUsers);
 
-router.route('/postSearch').get(can('search'), validate(generalValidation.postSearch), generalController.postSearch);
+router.route('/postSearch').get(can('searchPost'), validate(generalValidation.postSearch), generalController.postSearch);
 
 router
   .route('/ratings')
   .get(can('manageRatings'), ratingController.getRatings)
   .post(can('manageRatings'), validate(ratingValidation.doRatings), ratingController.doRatings);
+
+router.route('/upload').post(uploadImage, generalController.uploadImages);
 
 module.exports = router;

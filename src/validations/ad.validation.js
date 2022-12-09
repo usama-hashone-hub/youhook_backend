@@ -8,6 +8,7 @@ const createAd = {
     postalCode: Joi.string().required(),
     rent: Joi.number().required(),
     loc: Joi.object().required(),
+    user: Joi.custom(objectId).required(),
   }),
   files: Joi.object().keys({
     images: Joi.array().required(),

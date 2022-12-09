@@ -6,8 +6,8 @@ const createProduct = async (body) => {
   return Product.create(body);
 };
 
-const queryProducts = async (filter, options) => {
-  const products = await Product.paginate(filter, options);
+const queryProducts = async (filter, options, select) => {
+  const products = await Product.paginate(filter, options, select);
   return products;
 };
 

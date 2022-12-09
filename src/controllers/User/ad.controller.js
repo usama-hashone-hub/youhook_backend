@@ -63,7 +63,11 @@ const nearMeAds = catchAsync(async (req, res) => {
   let { latlng, maxDistance } = req.query;
   let [lat, lng] = latlng.split(',');
 
-  const ads = await ProductAd.aggregate([
+  const limit = req.query?.limit && parseInt(req.query?.limit, 10) > 0 ? parseInt(req.query?.limit, 10) : 10;
+  const page = req.query?.page && parseInt(req.query?.page, 10) > 0 ? parseInt(req.query?.page, 10) : 1;
+  const skip = (page - 1) * limit;
+
+  const nearMeStages = [
     {
       $geoNear: {
         near: { type: 'Point', coordinates: [lat * 1, lng * 1] },
@@ -74,6 +78,17 @@ const nearMeAds = catchAsync(async (req, res) => {
         minDistance: 0,
       },
     },
+  ];
+
+  const count = await ProductAd.aggregate([
+    ...nearMeStages,
+    {
+      $count: 'totalResults',
+    },
+  ]);
+
+  const docs = await ProductAd.aggregate([
+    ...nearMeStages,
     {
       $lookup: {
         from: 'users',
@@ -88,9 +103,24 @@ const nearMeAds = catchAsync(async (req, res) => {
         path: '$user',
       },
     },
+    {
+      $skip: skip,
+    },
+    {
+      $limit: limit,
+    },
   ]);
 
-  res.send({ ads });
+  const totalPages = Math.ceil(count[0]?.totalResults / limit);
+  const result = {
+    results: docs,
+    page,
+    limit,
+    totalPages,
+    totalResults: count[0]?.totalResults,
+  };
+
+  res.send(result);
 });
 
 module.exports = { createAd, getAds, getAd, updateAd, deleteAd, nearMeAds };

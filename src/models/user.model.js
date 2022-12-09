@@ -109,6 +109,11 @@ const userSchema = mongoose.Schema(
       ref: 'User',
       // get: getRatings,
     },
+    badges: {
+      type: [String],
+      enum: ['profile-completed-badge', 'first-review-badge', '10-rentIn-badge', '100-rentIn-badge'],
+      default: [],
+    },
   },
   {
     timestamps: true,

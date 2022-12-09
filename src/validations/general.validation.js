@@ -13,12 +13,12 @@ const getFeedbacks = {
 
 const getFeedback = {
   params: Joi.object().keys({
-    blockUser: Joi.string().custom(objectId).required(),
+    feedbackId: Joi.string().custom(objectId).required(),
   }),
 };
 
 const blockUser = {
-  params: Joi.object().keys({
+  body: Joi.object().keys({
     userId: Joi.string().custom(objectId).required(),
   }),
 };

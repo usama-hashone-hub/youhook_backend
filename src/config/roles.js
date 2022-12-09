@@ -13,6 +13,11 @@ const allRoles = {
     'updateRentStatus',
     'manageRatings',
     'reportIssue',
+    'getProducts',
+    'blockUser',
+    'unblockUser',
+    'getblockUsers',
+    'searchPost',
   ],
   admin: [
     'getMyProfile',
